@@ -11,7 +11,7 @@ class RedditPost:
         self.post = post
 
 
-    def to_tuple(self):
+    def to_tuple(self) -> tuple:
         return (self.keyword, self.date, self.count, self.id, self.post, self.subreddit)
 
 
@@ -24,5 +24,5 @@ class RedditComment:
         self.date = datetime.now().date()
         self.post = post
 
-    def to_tuple(self):
+    def to_tuple(self) -> tuple:
         return (self.keyword, self.date, self.count, self.post_id, self.post, self.subreddit)

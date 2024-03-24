@@ -5,7 +5,7 @@ from contextlib import contextmanager
 import os
 
 
-class Database_Manager():
+class Database_Pool_Manager():
     def __init__(self):
         self.cursorType = pymysql.cursors.DictCursor
         self.pool = PooledDB(
@@ -29,30 +29,11 @@ class Database_Manager():
         finally:
             connection.close()
 
-    def acquire_connection(self):
-        cursorType = pymysql.cursors.DictCursor
-        connection = pymysql.connect(
-            host= os.getenv('DB_HOST'),
-            user= os.getenv('DB_USER'),
-            password= os.getenv('DB_PASSWORD'),
-            database = os.getenv("DB_DATABASE"),
-            cursorclass=cursorType,
-        )
-        return connection
-
     def release_connection(self, connection):
         connection.close()
 
 
-    def insert_from_queue(self, cursor, tup_val):
-        SQLstmt = '''INSERT INTO keywords
-        (KEYWORD, CONV_DATE, CONV_COUNT, POST_ID, POST, SUBREDDIT)
-        VALUES (%s, %s, %s, %s, %s, %s)
-        ON DUPLICATE KEY UPDATE CONV_COUNT = CONV_COUNT + 1
-        '''
-        cursor.execute(SQLstmt, tup_val)
-
-    def get_table_data(self):
+    def get_table_data(self) -> list:
         with self.acquire_pool_connection() as connection:
             cursor = connection.cursor()
 
@@ -91,3 +72,29 @@ class Database_Manager():
             ]
             print(data)
             return data
+
+
+class Database_Manager():
+
+    def acquire_connection(self):
+        cursorType = pymysql.cursors.DictCursor
+        connection = pymysql.connect(
+            host = os.getenv('DB_HOST'),
+            user = os.getenv('DB_USER'),
+            password = os.getenv('DB_PASSWORD'),
+            database = os.getenv("DB_DATABASE"),
+            cursorclass= cursorType,
+        )
+        return connection
+
+    def insert_from_queue(self, connection, tup_val):
+        cursor = connection.cursor()
+        SQLstmt = '''INSERT INTO keywords
+        (KEYWORD, CONV_DATE, CONV_COUNT, POST_ID, POST, SUBREDDIT)
+        VALUES (%s, %s, %s, %s, %s, %s)
+        ON DUPLICATE KEY UPDATE CONV_COUNT = CONV_COUNT + 1
+        '''
+        cursor.execute(SQLstmt, tup_val)
+
+    def release_connection(self, connection):
+        connection.close()
