@@ -27,22 +27,9 @@ class RedditStreamer:
 
 
 
-    def stream_comments(self, queue):
+    def stream_comments(self, queue) -> None:
         for comment in self.reddit_client.subreddit(self.subreddits).stream.comments():
             keywords = self.lang_processer.extract_keywords(comment.body)
             print(f"New comment in {comment.subreddit}: {comment.body}")
             for keyword in keywords:
                 queue.put(models.RedditComment(keyword, comment.id, 1, False, comment.subreddit.display_name).to_tuple())
-
-
-    # Start threads for both submissions and comments
-    # threads = [
-    #     threading.Thread(target=stream_submissions, args=(reddit,)),
-    #     threading.Thread(target=stream_comments, args=(reddit,))
-    # ]
-
-    # for thread in threads:
-    #     thread.start()
-
-    # for thread in threads:
-    #     thread.join()

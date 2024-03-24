@@ -8,10 +8,10 @@ function App() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Fetch your data from the backend
+
     const fetchData = async () => {
       try {
-        // The endpoint to retrieve data from your database
+
         const response = await fetch(`${import.meta.env.VITE_API_URL}/api/tabledata`);
 
         if (!response.ok) {

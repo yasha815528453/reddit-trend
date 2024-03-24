@@ -20,14 +20,13 @@ DB_manager = Database_Manager()
 
 def insert_data(queue_data, reconnect_sec = 1800):
     db_conn = DB_manager.acquire_connection()
-    cursor = db_conn.cursor()
     last_reconnect = time.time()
     while True:
 
         while queue_data:
             try:
                 data = queue_data.get()
-                DB_manager.insert_from_queue(cursor, data)
+                DB_manager.insert_from_queue(db_conn, data)
                 db_conn.commit()
                 if time.time() - last_reconnect > reconnect_sec:
                     DB_manager.release_connection(db_conn)

@@ -10,7 +10,7 @@ class small_language_processer():
     def __init__(self):
         self.nlp = spacy.load("en_core_web_sm")
 
-
+    ## takes a string of set and returns interested topics/keywords
     def extract_keywords(self, text: str) -> set:
     # Removes hyphen and convert to lower
         text = text.replace("-", " ").lower()
@@ -21,11 +21,11 @@ class small_language_processer():
         def is_single_symbol(keyword):
             return len(keyword) == 1 and not keyword.isalnum()
 
-        # Define a function to check if a string contains any numbers
+
         def contains_number(s):
             return any(char.isdigit() for char in s)
 
-        # Define a function to check if a string is an emoji
+
 
 
         # Extract named entities, excluding specific types and those containing numbers or emojis
@@ -33,7 +33,6 @@ class small_language_processer():
             if ent.label_ not in {"MONEY", "DATE", "TIME", "QUANTITY"} and not contains_number(ent.text):
                 keywords.add(ent.text)
 
-        # Extract noun chunks, ensure they're not pronouns or adjectives, and handle punctuation
         for chunk in doc.noun_chunks:
             if not any(token.pos_ in {'PRON', 'ADJ', 'INTJ', 'AUX', 'ADV', 'ADP'} or token.is_stop for token in chunk) and not any(token.is_punct or "-" in token.text for token in chunk) and not contains_number(chunk.text):
                 # Simplify chunks to the last two words if longer than two words
