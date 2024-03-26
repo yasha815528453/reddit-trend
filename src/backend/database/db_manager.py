@@ -1,3 +1,5 @@
+from dotenv import load_dotenv
+load_dotenv()
 import pymysql
 import pymysql.cursors
 from dbutils.pooled_db import PooledDB
@@ -55,10 +57,12 @@ class Database_Pool_Manager():
             ON today.KEYWORD = last_week.KEYWORD
             LEFT JOIN
                 (SELECT KEYWORD, SUM(CONV_COUNT) AS CONV_COUNT FROM keywords WHERE CONV_DATE = CURDATE() - INTERVAL 30 DAY GROUP BY KEYWORD) last_month
-            ON today.KEYWORD = last_month.KEYWORD;
+            ON today.KEYWORD = last_month.KEYWORD
+            ORDER BY TODAY_COUNT DESC;
             """
             cursor.execute(SQLstmt)
             results = cursor.fetchall()
+            print(results)
             data = [
                 {
                     'KEYWORD': row['KEYWORD'],

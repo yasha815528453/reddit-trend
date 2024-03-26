@@ -30,7 +30,7 @@ class TestDatabasePoolManager(unittest.TestCase):
 
         db_pool_manager = Database_Pool_Manager()
         results = db_pool_manager.get_table_data()
-
+        print("lol")
 
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0]['KEYWORD'], 'test')
