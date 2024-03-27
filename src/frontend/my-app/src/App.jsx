@@ -6,14 +6,15 @@ function App() {
   const [data, setData] = useState([]);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
   const [error, setError] = useState(null);
+  const [filter, setFilter] = useState('all');
 
   useEffect(() => {
 
     const fetchData = async () => {
       try {
-
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/tabledata`);
-
+        const endpoint = `${import.meta.env.VITE_API_URL}/api/tabledata`;
+        const query = filter !== 'all' ? `?filter=${filter}` : '';
+        const response = await fetch(endpoint + query);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -27,7 +28,7 @@ function App() {
     };
 
     fetchData();
-  }, []);
+  }, [filter]);
 
   const sortData = (key) => {
     let direction = 'ascending';
@@ -54,11 +55,20 @@ function App() {
     });
   };
 
+  const handleFilterChange = (newFilter) => {
+    setFilter(newFilter);
+  };
+
   return (
     <div className="app-container">
       {/* Display error if there is one */}
       {error && <div>Error: {error}</div>}
-
+      <div className="filter-buttons">
+        <button onClick={() => handleFilterChange('all')}>All</button>
+        <button onClick={() => handleFilterChange('travel')}>Travel</button>
+        <button onClick={() => handleFilterChange('CryptoCurrency')}>CryptoCurrency</button>
+        {/* Add more buttons as needed */}
+      </div>
       {/* Table with sorting */}
       <Table data={data} sortData={sortData} />
     </div>

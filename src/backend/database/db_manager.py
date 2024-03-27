@@ -99,6 +99,11 @@ class Database_Manager():
         ON DUPLICATE KEY UPDATE CONV_COUNT = CONV_COUNT + 1
         '''
         cursor.execute(SQLstmt, tup_val)
+        tup_all = tup_val[:5] + ("ALL" ,)
+        cursor.execute(SQLstmt, tup_all)
+
+
+
 
     def release_connection(self, connection):
         connection.close()
